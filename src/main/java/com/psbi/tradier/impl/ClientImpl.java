@@ -1,11 +1,11 @@
-package com.pschmeltzer.tradier.impl;
+package com.psbi.tradier.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.pschmeltzer.tradier.Client;
-import com.pschmeltzer.tradier.obj.Quote;
+import com.psbi.tradier.Client;
+import com.psbi.tradier.obj.Quote;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

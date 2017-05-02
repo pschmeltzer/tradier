@@ -1,4 +1,4 @@
-package com.pschmeltzer.tradier.obj;
+package com.psbi.tradier.obj;
 
 import com.google.gson.annotations.SerializedName;
 

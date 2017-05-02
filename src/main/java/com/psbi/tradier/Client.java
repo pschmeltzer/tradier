@@ -1,6 +1,6 @@
-package com.pschmeltzer.tradier;
+package com.psbi.tradier;
 
-import com.pschmeltzer.tradier.obj.Quote;
+import com.psbi.tradier.obj.Quote;
 
 import java.util.Collection;
 
