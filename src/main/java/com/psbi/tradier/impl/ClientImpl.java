@@ -34,13 +34,13 @@ public class ClientImpl implements Client {
 
 
     private ClientImpl() {
-        String url = System.getProperty("com.pschmeltzer.tradier.api.url");
+        String url = System.getProperty("com.psbi.tradier.api.url");
         if (url == null || url.isEmpty()) {
-            throw new IllegalArgumentException("No api url defined: com.pschmeltzer.tradier.api.url");
+            throw new IllegalArgumentException("No api url defined: com.psbi.tradier.api.url");
         }
-        String token = System.getProperty("com.pschmeltzer.tradier.api.token");
+        String token = System.getProperty("com.psbi.tradier.api.token");
         if (token == null || token.isEmpty()) {
-            throw new IllegalArgumentException("No api url defined: com.pschmeltzer.tradier.api.token");
+            throw new IllegalArgumentException("No api url defined: com.psbi.tradier.api.token");
         }
         this.token = token;
         this.apiPath = url;
