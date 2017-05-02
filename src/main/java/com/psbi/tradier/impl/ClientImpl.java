@@ -64,37 +64,6 @@ public class ClientImpl implements Client {
 
     public static void main(String[] args) {
         Client client = new ClientImpl();
-
-        System.out.println(client.getQuote("AAPl"));
-
-        System.out.println(client.getQuotes("AAPl", "BAC"));
-
-
-        /*
-        HttpEntity entity = new HttpEntity(client.headers);
-
-        URI uri = UriComponentsBuilder.fromHttpUrl(client.apiPath)
-                .path("markets/quotes")
-                .queryParam("symbols", "AAPL")
-                .build().encode().toUri();
-
-        ResponseEntity<String> exchange = client.restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-
-        Gson gson = new Gson();
-
-        JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
-
-        JsonObject quotes = (JsonObject)jsonObject.get("quotes");
-        if(quotes.isJsonArray()) {
-            JsonArray quoteArray = quotes.getAsJsonArray("quote");
-            for (JsonElement quoteElement : quoteArray) {
-                System.out.println(quoteElement);
-                System.out.println();
-            }
-        }else{
-            JsonElement quote = quotes.get("quote");
-            System.out.println(quote);
-        }*/
     }
 
     @Override
@@ -114,18 +83,6 @@ public class ClientImpl implements Client {
         JsonElement quote = quotes.get("quote");
 
         return gson.fromJson(quote, Quote.class);
-
-        /*
-        if(quotes.isJsonArray()) {
-            JsonArray quoteArray = quotes.getAsJsonArray("quote");
-            for (JsonElement quoteElement : quoteArray) {
-                System.out.println(quoteElement);
-                System.out.println();
-            }
-        }else{
-
-            System.out.println(quote);
-        }*/
 
     }
 
