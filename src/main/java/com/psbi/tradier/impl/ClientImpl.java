@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.psbi.tradier.Client;
+import com.psbi.tradier.obj.HistoricalDailyPrice;
 import com.psbi.tradier.obj.Quote;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -64,6 +65,8 @@ public class ClientImpl implements Client {
 
     public static void main(String[] args) {
         Client client = new ClientImpl();
+        Collection<HistoricalDailyPrice> aapl = client.getHistory("AAPL");
+        System.out.println(aapl);
     }
 
     @Override
@@ -75,12 +78,9 @@ public class ClientImpl implements Client {
                 .queryParam("symbols", symbol)
                 .build().encode().toUri();
 
-        ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-
-        JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
-
-        JsonObject quotes = (JsonObject) jsonObject.get("quotes");
-        JsonElement quote = quotes.get("quote");
+        JsonElement quote = ((JsonObject) gson.fromJson(
+                restTemplate.exchange(uri, HttpMethod.GET, entity, String.class).getBody(), JsonObject.class
+        ).get("quotes")).get("quote");
 
         return gson.fromJson(quote, Quote.class);
 
@@ -95,11 +95,10 @@ public class ClientImpl implements Client {
                 .queryParam("symbols", Arrays.stream(symbols).collect(Collectors.joining(",")))
                 .build().encode().toUri();
 
-        ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-        JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
-        JsonObject quotes = (JsonObject) jsonObject.get("quotes");
+        JsonElement quoteObject = ((JsonObject) gson.fromJson(
+                restTemplate.exchange(uri, HttpMethod.GET, entity, String.class).getBody(), JsonObject.class
+        ).get("quotes")).get("quote");
 
-        JsonElement quoteObject = quotes.get("quote");
         if (quoteObject.isJsonArray()) {
             JsonArray quoteArray = quoteObject.getAsJsonArray();
             List<Quote> quotesList = new ArrayList<>(quoteArray.size());
@@ -108,8 +107,50 @@ public class ClientImpl implements Client {
             }
             return quotesList;
         }
-
         throw new IllegalStateException("quotes was not an array");
+    }
 
+    @Override
+    public Collection<HistoricalDailyPrice> getHistory(long fromDate, long toDate, String symbol) {
+        HttpEntity entity = new HttpEntity(headers);
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(apiPath)
+                .path("markets/history")
+                .queryParam("symbol", symbol)
+                .queryParam("start", dateOfEpochMillis(fromDate))
+                .queryParam("end", dateOfEpochMillis(toDate))
+                .build().encode().toUri();
+        ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
+        JsonArray history = ((JsonObject) jsonObject.get("history"))
+                .get("day").getAsJsonArray();
+        List<HistoricalDailyPrice> prices = new ArrayList<>(history.size());
+        for (JsonElement element : history) {
+            prices.add(gson.fromJson(element, HistoricalDailyPrice.class));
+        }
+        return prices;
+    }
+
+    private String dateOfEpochMillis(long epochMillis) {
+        final long millisPerDay = 1000 * 60 * 60 * 24;
+        return java.time.LocalDate.ofEpochDay(epochMillis / millisPerDay).toString();
+    }
+
+    @Override
+    public Collection<HistoricalDailyPrice> getHistory(String symbol) {
+        HttpEntity entity = new HttpEntity(headers);
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(apiPath)
+                .path("markets/history")
+                .queryParam("symbol", symbol)
+                .build().encode().toUri();
+        ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
+        JsonArray history = ((JsonObject) jsonObject.get("history")).get("day").getAsJsonArray();
+        List<HistoricalDailyPrice> prices = new ArrayList<>(history.size());
+        for (JsonElement element : history) {
+            prices.add(gson.fromJson(element, HistoricalDailyPrice.class));
+        }
+        return prices;
     }
 }
