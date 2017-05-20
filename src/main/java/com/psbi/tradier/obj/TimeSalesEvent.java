@@ -1,5 +1,7 @@
 package com.psbi.tradier.obj;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.time.LocalDateTime;
 
 /**
@@ -16,11 +18,17 @@ public class TimeSalesEvent {
         <volume>2212195</volume>
      */
 
+    @SerializedName("time")
     private final LocalDateTime time;
+    @SerializedName("open")
     private final double open;
+    @SerializedName("high")
     private final double high;
+    @SerializedName("low")
     private final double low;
+    @SerializedName("close")
     private final double close;
+    @SerializedName("volume")
     private final long volume;
 
     public TimeSalesEvent(LocalDateTime time, double open, double high, double low, double close, long volume) {
