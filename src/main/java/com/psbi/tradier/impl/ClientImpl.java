@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.psbi.tradier.Client;
 import com.psbi.tradier.obj.HistoricalDailyPrice;
 import com.psbi.tradier.obj.Quote;
+import com.psbi.tradier.utils.GsonHelper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.psbi.tradier.utils.Utils.dateOfEpochMillis;
+
 /**
  * Created by Peter.Schmeltzer on 5/1/2017.
  */
@@ -31,14 +34,11 @@ public class ClientImpl implements Client {
     private final HttpHeaders headers;
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final Gson gson = new Gson();
 
+    private final Gson gson = GsonHelper.getGson();
 
     private ClientImpl() {
         String url = System.getProperty("com.psbi.tradier.api.url","https://sandbox.tradier.com/v1/");
-        if (url == null || url.isEmpty()) {
-            throw new IllegalArgumentException("No api url defined: com.psbi.tradier.api.url");
-        }
         String token = System.getProperty("com.psbi.tradier.api.token");
         if (token == null || token.isEmpty()) {
             throw new IllegalArgumentException("No api url defined: com.psbi.tradier.api.token");
@@ -131,10 +131,6 @@ public class ClientImpl implements Client {
         return prices;
     }
 
-    private String dateOfEpochMillis(long epochMillis) {
-        final long millisPerDay = 1000 * 60 * 60 * 24;
-        return java.time.LocalDate.ofEpochDay(epochMillis / millisPerDay).toString();
-    }
 
     @Override
     public Collection<HistoricalDailyPrice> getHistory(String symbol) {

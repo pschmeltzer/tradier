@@ -2,12 +2,14 @@ package com.psbi.tradier.obj;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.time.LocalDate;
+
 /**
  * Created by bicabone on 5/2/2017.
  */
 public class HistoricalDailyPrice {
     @SerializedName("date")
-    private final String date;
+    private final LocalDate date;
     @SerializedName("open")
     private final double open;
     @SerializedName("high")
@@ -19,7 +21,7 @@ public class HistoricalDailyPrice {
     @SerializedName("volume")
     private final int volume;
 
-    public HistoricalDailyPrice(String date, double open, double high, double low, double close, int volume) {
+    public HistoricalDailyPrice(LocalDate date, double open, double high, double low, double close, int volume) {
         this.date = date;
         this.open = open;
         this.high = high;
@@ -28,7 +30,7 @@ public class HistoricalDailyPrice {
         this.volume = volume;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
