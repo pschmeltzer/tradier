@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.psbi.tradier.Client;
 import com.psbi.tradier.obj.HistoricalDailyPrice;
 import com.psbi.tradier.obj.Quote;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,6 +102,7 @@ public class ClientImpl implements Client {
         ).get("quotes")).get("quote");
 
         if (quoteObject.isJsonArray()) {
+
             JsonArray quoteArray = quoteObject.getAsJsonArray();
             List<Quote> quotesList = new ArrayList<>(quoteArray.size());
             for (JsonElement quoteElement : quoteArray) {
@@ -122,13 +125,8 @@ public class ClientImpl implements Client {
                 .build().encode().toUri();
         ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
         JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
-        JsonArray history = ((JsonObject) jsonObject.get("history"))
-                .get("day").getAsJsonArray();
-        List<HistoricalDailyPrice> prices = new ArrayList<>(history.size());
-        for (JsonElement element : history) {
-            prices.add(gson.fromJson(element, HistoricalDailyPrice.class));
-        }
-        return prices;
+        Type token = new TypeToken<Collection<HistoricalDailyPrice>>(){}.getType();
+        return gson.fromJson(((JsonObject)jsonObject.get("history")).get("day"),token);
     }
 
 
@@ -142,11 +140,8 @@ public class ClientImpl implements Client {
                 .build().encode().toUri();
         ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
         JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
-        JsonArray history = ((JsonObject) jsonObject.get("history")).get("day").getAsJsonArray();
-        List<HistoricalDailyPrice> prices = new ArrayList<>(history.size());
-        for (JsonElement element : history) {
-            prices.add(gson.fromJson(element, HistoricalDailyPrice.class));
-        }
-        return prices;
+
+        Type token = new TypeToken<Collection<HistoricalDailyPrice>>(){}.getType();
+        return gson.fromJson(((JsonObject)jsonObject.get("history")).get("day"),token);
     }
 }
