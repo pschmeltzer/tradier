@@ -35,7 +35,7 @@ public class ClientImpl implements Client {
 
 
     private ClientImpl() {
-        String url = System.getProperty("com.psbi.tradier.api.url");
+        String url = System.getProperty("com.psbi.tradier.api.url","https://sandbox.tradier.com/v1/");
         if (url == null || url.isEmpty()) {
             throw new IllegalArgumentException("No api url defined: com.psbi.tradier.api.url");
         }
