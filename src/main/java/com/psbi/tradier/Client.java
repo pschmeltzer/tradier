@@ -2,6 +2,7 @@ package com.psbi.tradier;
 
 import com.psbi.tradier.obj.HistoricalDailyPrice;
 import com.psbi.tradier.obj.Quote;
+import com.psbi.tradier.obj.TimeSalesEvent;
 
 import java.util.Collection;
 
@@ -18,4 +19,6 @@ public interface Client {
     Collection<HistoricalDailyPrice> getHistory(long fromDate, long toDate, String symbol);
 
     Collection<HistoricalDailyPrice> getHistory(String symbol);
+
+    Collection<TimeSalesEvent> getTimeSalesData(String symbol, TimeSalesEvent.Interval interval, long startTime, long endTime);
 }

@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.psbi.tradier.Client;
 import com.psbi.tradier.obj.HistoricalDailyPrice;
 import com.psbi.tradier.obj.Quote;
+import com.psbi.tradier.obj.TimeSalesEvent;
 import com.psbi.tradier.utils.GsonHelper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -148,5 +149,26 @@ public class ClientImpl implements Client {
 
         Type token = new TypeToken<Collection<HistoricalDailyPrice>>(){}.getType();
         return gson.fromJson(((JsonObject)jsonObject.get("history")).get("day"),token);
+    }
+
+    @Override
+    public Collection<TimeSalesEvent> getTimeSalesData(String symbol, TimeSalesEvent.Interval interval, long startTime, long endTime) {
+
+        HttpEntity entity = new HttpEntity(headers);
+
+        URI uri = UriComponentsBuilder.fromHttpUrl(apiPath)
+                .path("markets/timesales")
+                .queryParam("symbol", symbol)
+                .queryParam("start", dateOfEpochMillis(startTime))
+                .queryParam("end", dateOfEpochMillis(endTime))
+                .queryParam("interval", interval.getTradierInterval())
+                .build().encode().toUri();
+        ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
+        JsonArray series = ((JsonObject) jsonObject.get("series"))
+                .get("data").getAsJsonArray();
+        List<TimeSalesEvent> data = new ArrayList<>(series.size());
+
+        return null;
     }
 }

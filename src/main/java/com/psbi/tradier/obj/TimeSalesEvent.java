@@ -9,6 +9,21 @@ import java.time.LocalDateTime;
  */
 public class TimeSalesEvent {
 
+    public enum Interval {
+
+        TICK("tick"), ONE_MINUTE("1min"), FIVE_MINUTE("5min"), FIFTEEN_MINUTE("15min");
+
+        private final String tradierInterval;
+
+        Interval(String tradierInterval) {
+            this.tradierInterval = tradierInterval;
+        }
+
+        public String getTradierInterval() {
+            return tradierInterval;
+        }
+    }
+
     /*
         <time>2014-04-03T10:15</time>
         <open>188.92</open>
