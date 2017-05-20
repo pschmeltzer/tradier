@@ -67,8 +67,10 @@ public class ClientImpl implements Client {
 
     public static void main(String[] args) {
         Client client = new ClientImpl();
-        Collection<HistoricalDailyPrice> aapl = client.getHistory("AAPL");
-        System.out.println(aapl);
+        //Collection<HistoricalDailyPrice> aapl = client.getHistory("AAPL");
+        //System.out.println(aapl);
+
+        System.out.println(client.getQuotes("AAPL","BAC"));
     }
 
     @Override
@@ -103,12 +105,15 @@ public class ClientImpl implements Client {
 
         if (quoteObject.isJsonArray()) {
 
+            /*
             JsonArray quoteArray = quoteObject.getAsJsonArray();
             List<Quote> quotesList = new ArrayList<>(quoteArray.size());
             for (JsonElement quoteElement : quoteArray) {
                 quotesList.add(gson.fromJson(quoteElement, Quote.class));
             }
-            return quotesList;
+            return quotesList;*/
+            Type token = new TypeToken<Collection<Quote>>(){}.getType();
+            return gson.fromJson(quoteObject,token);
         }
         throw new IllegalStateException("quotes was not an array");
     }
