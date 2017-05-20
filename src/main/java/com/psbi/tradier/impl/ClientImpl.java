@@ -71,7 +71,10 @@ public class ClientImpl implements Client {
         //Collection<HistoricalDailyPrice> aapl = client.getHistory("AAPL");
         //System.out.println(aapl);
 
-        System.out.println(client.getQuotes("AAPL","BAC"));
+        System.out.println(client.getTimeSalesData(
+                "AAPL",TimeSalesEvent.Interval.ONE_MINUTE,System.currentTimeMillis() - 24 * 5 * 60 * 60 * 1000 , System.currentTimeMillis()
+                )
+        );
     }
 
     @Override
@@ -105,14 +108,6 @@ public class ClientImpl implements Client {
         ).get("quotes")).get("quote");
 
         if (quoteObject.isJsonArray()) {
-
-            /*
-            JsonArray quoteArray = quoteObject.getAsJsonArray();
-            List<Quote> quotesList = new ArrayList<>(quoteArray.size());
-            for (JsonElement quoteElement : quoteArray) {
-                quotesList.add(gson.fromJson(quoteElement, Quote.class));
-            }
-            return quotesList;*/
             Type token = new TypeToken<Collection<Quote>>(){}.getType();
             return gson.fromJson(quoteObject,token);
         }
@@ -146,7 +141,6 @@ public class ClientImpl implements Client {
                 .build().encode().toUri();
         ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
         JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
-
         Type token = new TypeToken<Collection<HistoricalDailyPrice>>(){}.getType();
         return gson.fromJson(((JsonObject)jsonObject.get("history")).get("day"),token);
     }
@@ -165,10 +159,8 @@ public class ClientImpl implements Client {
                 .build().encode().toUri();
         ResponseEntity<String> exchange = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
         JsonObject jsonObject = gson.fromJson(exchange.getBody(), JsonObject.class);
-        JsonArray series = ((JsonObject) jsonObject.get("series"))
-                .get("data").getAsJsonArray();
-        List<TimeSalesEvent> data = new ArrayList<>(series.size());
+        Type token = new TypeToken<Collection<TimeSalesEvent>>(){}.getType();
+        return gson.fromJson(((JsonObject)jsonObject.get("series")).get("data"), token);
 
-        return null;
     }
 }
